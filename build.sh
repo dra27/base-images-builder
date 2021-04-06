@@ -13,20 +13,17 @@ case $1 in
   cd docker-base-images/ocurrent
   ocaml-env exec -- opam install -y --deps-only --with-test .
 ;;
-4)
+extract)
   cd docker-base-images
-  mkdir install
+  mkdir -p install
   ocaml-env exec -- dune build @install --profile=release
   ocaml-env exec -- dune install --prefix=install --relocatable
-;;
-5)
-  cd docker-base-images/ocluster
-  mkdir install
+  cd ocluster
+  mkdir -p install
   ocaml-env exec -- dune build @install --profile=release --root=.
   ocaml-env exec -- dune install --prefix=install --relocatable --root=.
-;;
-extract)
-  for dir in docker-base-images/install/bin docker-base-images/ocluster/install/bin; do
+  cd ..
+  for dir in install/bin ocluster/install/bin; do
     for exe in $dir/*.exe ; do
       for dll in $(PATH="/usr/x86_64-w64-mingw32/sys-root/mingw/bin:$PATH" cygcheck "$exe" | fgrep x86_64-w64-mingw32 | sed -e 's/^ *//'); do
         if [ ! -e /cygdrive/c/output/$(basename "$dll") ] ; then
