@@ -1,25 +1,53 @@
 #!/usr/bin/env bash
 
+set -ex
+
 case $1 in
 1)
-  cd docker-base-images
-  ocaml-env exec -- opam install -y --deps-only --with-test .
+  ocaml-env exec -- opam install -y --deps-only --with-test mirage-crypto
+  ocaml-env exec -- opam source mirage-crypto.0.9.2
+  cd mirage-crypto.0.9.2
+  ocaml-env exec -- env PKG_CONFIG_PATH=/cygdrive/c/opam/.opam/4.12/lib/pkgconfig dune build -p mirage-crypto @install
+  ocaml-env exec -- env PKG_CONFIG_PATH=/cygdrive/c/opam/.opam/4.12/lib/pkgconfig opam install -y ./mirage-crypto.opam
 ;;
 2)
-  cd docker-base-images/ocluster
-  ocaml-env exec -- opam install -y --deps-only --with-test .
+  cd docker-base-images/ocurrent
+  ocaml-env exec -- opam install --deps-only -y .
 ;;
 3)
-  cd docker-base-images/ocurrent
-  ocaml-env exec -- opam install -y --deps-only --with-test .
+  cd docker-base-images/ocluster
+  sed -i'' '/conf-libev/d' ocluster.opam
+  ocaml-env exec -- opam install --deps-only -y .
+;;
+4)
+  cd docker-base-images
+  ocaml-env exec -- opam install --deps-only -y .
 ;;
 extract)
   cd docker-base-images
+
+  git fetch origin
+  git reset --hard
+  git submodule foreach --recursive git reset --hard
+  git checkout b516a99ed436510821cfb67fb98f8f372aeb4a1b
+  git submodule update --recursive
+
+  sed -i'' \
+      -e 's|ocurrent/opam-staging|antonindecimo/opam-windows|g' \
+      -e 's|ocaml/opam|antonindecimo/opam-windows|g' \
+      -e 's|\"ocurrent\"|\"antonindecimo\"|g' \
+      -e 's/  | `Linux | `Windows -> true/  | `Windows -> true/g' \
+      src/conf.ml
+  sed -i'' \
+      -e 's|\"ocurrentbuilder\"|\"antonindecimo\"|g' \
+      src/base_images.ml
+
   mkdir -p install
   ocaml-env exec -- dune build @install --profile=release
   ocaml-env exec -- dune install --prefix=install --relocatable
   cd ocluster
   mkdir -p install
+  ocaml-env exec -- opam install --deps-only -y .
   ocaml-env exec -- dune build @install --profile=release --root=.
   ocaml-env exec -- dune install --prefix=install --relocatable --root=.
   cd ..
