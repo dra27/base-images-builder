@@ -9,6 +9,11 @@ case $1 in
   cd mirage-crypto.0.9.2
   ocaml-env exec -- env PKG_CONFIG_PATH=/cygdrive/c/opam/.opam/4.12/lib/pkgconfig dune build -p mirage-crypto @install
   ocaml-env exec -- env PKG_CONFIG_PATH=/cygdrive/c/opam/.opam/4.12/lib/pkgconfig opam install -y ./mirage-crypto.opam
+
+  ocaml-env exec -- opam source --dev-repo extunix
+  cd extunix
+  ocaml-env exec -- opam install -y --deps-only .
+  ocaml-env exec -- opam install -y .
 ;;
 2)
   cd docker-base-images/ocurrent
@@ -24,13 +29,9 @@ case $1 in
   ocaml-env exec -- opam install --deps-only -y .
 ;;
 extract)
+  rm -rf docker-base-images
+  git clone --recursive --depth=1 --branch=windows https://github.com/MisterDA/docker-base-images.git
   cd docker-base-images
-
-  git fetch origin
-  git reset --hard
-  git submodule foreach --recursive git reset --hard
-  git checkout b516a99ed436510821cfb67fb98f8f372aeb4a1b
-  git submodule update --recursive
 
   sed -i'' \
       -e 's|ocurrent/opam-staging|antonindecimo/opam-windows|g' \
