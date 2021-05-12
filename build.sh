@@ -9,11 +9,6 @@ case $1 in
   cd mirage-crypto.0.9.2
   ocaml-env exec -- env PKG_CONFIG_PATH=/cygdrive/c/opam/.opam/4.12/lib/pkgconfig dune build -p mirage-crypto @install
   ocaml-env exec -- env PKG_CONFIG_PATH=/cygdrive/c/opam/.opam/4.12/lib/pkgconfig opam install -y ./mirage-crypto.opam
-
-  ocaml-env exec -- opam source --dev-repo extunix
-  cd extunix
-  ocaml-env exec -- opam install -y --deps-only .
-  ocaml-env exec -- opam install -y .
 ;;
 2)
   cd docker-base-images/ocurrent
