@@ -12,16 +12,16 @@ case $1 in
 ;;
 2)
   cd docker-base-images/ocurrent
-  ocaml-env exec -- opam install --deps-only -y .
+  ocaml-env exec -- opam install -y .
 ;;
 3)
   cd docker-base-images/ocluster
   sed -i'' '/conf-libev/d' ocluster.opam
-  ocaml-env exec -- opam install --deps-only -y .
+  ocaml-env exec -- opam install -y .
 ;;
 4)
   cd docker-base-images
-  ocaml-env exec -- opam install --deps-only -y .
+  ocaml-env exec -- opam install -y .
 ;;
 extract)
   rm -rf docker-base-images
@@ -43,7 +43,6 @@ extract)
   ocaml-env exec -- dune install --prefix=install --relocatable
   cd ocluster
   mkdir -p install
-  ocaml-env exec -- opam install --deps-only -y .
   ocaml-env exec -- dune build @install --profile=release --root=.
   ocaml-env exec -- dune install --prefix=install --relocatable --root=.
   cd ..
