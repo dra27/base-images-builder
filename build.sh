@@ -12,22 +12,22 @@ case $1 in
   ocaml-env exec -- env PKG_CONFIG_PATH=/cygdrive/c/opam/.opam/4.12/lib/pkgconfig dune build -p mirage-crypto @install
   ocaml-env exec -- env PKG_CONFIG_PATH=/cygdrive/c/opam/.opam/4.12/lib/pkgconfig opam install -y ./mirage-crypto.opam
 
+  cd ..
   ocaml-env exec -- opam source mirage-crypto-ec.0.10.1
   cd mirage-crypto-ec.0.10.1
   ocaml-env exec -- opam install -y --deps-only --with-test ./mirage-crypto-ec.opam
   ocaml-env exec -- env PKG_CONFIG_PATH=/cygdrive/c/opam/.opam/4.12/lib/pkgconfig dune build -p mirage-crypto-ec @install
   ocaml-env exec -- env PKG_CONFIG_PATH=/cygdrive/c/opam/.opam/4.12/lib/pkgconfig opam install -y ./mirage-crypto-ec.opam
-;;
-2)
-  cd docker-base-images/ocurrent
+
+  cd ../docker-base-images/ocurrent
   ocaml-env exec -- opam install -y --deps-only .
 ;;
-3)
+2)
   cd docker-base-images/ocluster
   # sed -i'' '/conf-libev/d' ocluster.opam
   ocaml-env exec -- opam install -y --deps-only .
 ;;
-4)
+3)
   cd docker-base-images
   ocaml-env exec -- opam install -y --deps-only .
 ;;
