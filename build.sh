@@ -46,16 +46,18 @@ extract)
       -e 's|\"ocurrentbuilder\"|\"antonindecimo\"|g' \
       src/base_images.ml
 
+  PROFILE=release
+
   cd ocluster || exit
   mkdir -p install
   # ocaml-env exec -- opam install -y .
-  ocaml-env exec -- dune build @install --profile=release --root=.
+  ocaml-env exec -- dune build @install --profile=$PROFILE --root=.
   ocaml-env exec -- dune install --prefix=install --relocatable --root=.
 
   cd .. || exit
   mkdir -p install
   # ocaml-env exec -- opam install -y .
-  ocaml-env exec -- dune build @install --profile=release
+  ocaml-env exec -- dune build @install --profile=$PROFILE
   ocaml-env exec -- dune install --prefix=install --relocatable
 
   for dir in install/bin ocluster/install/bin; do
