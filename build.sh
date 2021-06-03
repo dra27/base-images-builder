@@ -48,6 +48,8 @@ extract)
 
   PROFILE=release
 
+  opam reinstall -y lwt prometheus-app winsvc
+
   cd ocluster || exit
   mkdir -p install
   # ocaml-env exec -- opam install -y .

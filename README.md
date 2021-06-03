@@ -23,7 +23,7 @@ run Windows jobs, then
 @rem the current repo
 cd base-images-builder
 @rem the OCluster state
-set LIB=%APPDATA%\ocluster\var\lib
+set LIB=%APPDATA%\ocluster
 mkdir "%LIB%" capnp-secrets
 
 @rem Build everything
@@ -46,7 +46,7 @@ sc start ocluster-scheduler
   --capacity=%NUMBER_OF_PROCESSORS% ^
   --allow-push antonindecimo/opam-windows ^
   --prune-threshold=10 ^
-  %CD%\capnp-secrets\pool-windows-x86_64.cap
+  --connect=%CD%\capnp-secrets\pool-windows-x86_64.cap
 
 @rem as an Administrator
 sc start ocluster-worker
