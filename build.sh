@@ -23,7 +23,7 @@ case $1 in
   ocaml-env exec -- opam install -y --deps-only .
 ;;
 2)
-  cd docker-base-images/ocluster
+  cd ocluster
   # sed -i'' '/conf-libev/d' ocluster.opam
   ocaml-env exec -- opam install -y --deps-only .
 ;;
@@ -32,8 +32,9 @@ case $1 in
   ocaml-env exec -- opam install -y --deps-only .
 ;;
 extract)
-  rm -rf docker-base-images
+  rm -rf docker-base-images ocluster
   git clone --recursive --depth=1 --branch=windows https://github.com/MisterDA/docker-base-images.git
+  git clone --recursive --depth=1 --branch=windows https://github.com/MisterDA/ocluster.git
   cd docker-base-images || exit
 
   sed -i'' \
@@ -50,19 +51,20 @@ extract)
 
   opam reinstall -y lwt prometheus-app winsvc
 
-  cd ocluster || exit
+  cd ../ocluster || exit
   mkdir -p install
   # ocaml-env exec -- opam install -y .
   ocaml-env exec -- dune build @install --profile=$PROFILE --root=.
   ocaml-env exec -- dune install --prefix=install --relocatable --root=.
 
-  cd .. || exit
+  cd ../docker-base-images || exit
   mkdir -p install
   # ocaml-env exec -- opam install -y .
   ocaml-env exec -- dune build @install --profile=$PROFILE
   ocaml-env exec -- dune install --prefix=install --relocatable
 
-  for dir in install/bin ocluster/install/bin; do
+  cd .. || exit
+  for dir in docker-base-images/install/bin ocluster/install/bin; do
     for exe in $dir/*.exe ; do
       for dll in $(PATH="/usr/x86_64-w64-mingw32/sys-root/mingw/bin:$PATH" cygcheck "$exe" | fgrep x86_64-w64-mingw32 | sed -e 's/^ *//'); do
         if [ ! -e /cygdrive/c/output/$(basename "$dll") ] ; then
