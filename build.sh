@@ -54,6 +54,23 @@ extract)
   cd ../ocluster || exit
   mkdir -p install
   # ocaml-env exec -- opam install -y .
+
+  patch -Np1 <<EOF
+diff --git a/bin/winsvc_wrapper.winsvc.ml b/bin/winsvc_wrapper.winsvc.ml
+index c4055ec..2802854 100644
+--- a/bin/winsvc_wrapper.winsvc.ml
++++ b/bin/winsvc_wrapper.winsvc.ml
+@@ -1,6 +1,6 @@
+ let formatter =
+-  let f = Filename.null in
+-  (* let f = Filename.(concat (Sys.getenv "APPDATA") (Sys.executable_name |> basename |> remove_extension |> Fun.flip (^) ".log")) in *)
++  (* let f = Filename.null in *)
++  let f = Filename.(concat (Sys.getenv "APPDATA") (Sys.executable_name |> basename |> remove_extension |> Fun.flip (^) ".log")) in
+   Format.formatter_of_out_channel (open_out_bin f)
+
+ let run name main =
+EOF
+
   ocaml-env exec -- dune build @install --profile=$PROFILE --root=.
   ocaml-env exec -- dune install --prefix=install --relocatable --root=.
 
