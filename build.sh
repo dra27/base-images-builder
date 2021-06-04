@@ -24,7 +24,6 @@ case $1 in
 ;;
 2)
   cd ocluster
-  # sed -i'' '/conf-libev/d' ocluster.opam
   ocaml-env exec -- opam install -y --deps-only .
 ;;
 3)
@@ -32,29 +31,13 @@ case $1 in
   ocaml-env exec -- opam install -y --deps-only .
 ;;
 extract)
+  PROFILE=debug
+
   rm -rf docker-base-images ocluster
   git clone --recursive --depth=1 --branch=windows https://github.com/MisterDA/docker-base-images.git
   git clone --recursive --depth=1 --branch=windows https://github.com/MisterDA/ocluster.git
-  cd docker-base-images || exit
 
-  sed -i'' \
-      -e 's|ocurrent/opam-staging|antonindecimo/opam-windows|g' \
-      -e 's|ocaml/opam|antonindecimo/opam-windows|g' \
-      -e 's|\"ocurrent\"|\"antonindecimo\"|g' \
-      -e 's/  | `Linux | `Windows -> true/  | `Windows -> true/g' \
-      src/conf.ml
-  sed -i'' \
-      -e 's|\"ocurrentbuilder\"|\"antonindecimo\"|g' \
-      src/base_images.ml
-
-  PROFILE=release
-
-  opam reinstall -y lwt prometheus-app winsvc
-
-  cd ../ocluster || exit
-  mkdir -p install
-  # ocaml-env exec -- opam install -y .
-
+  cd ocluster || exit
   patch -Np1 <<EOF
 diff --git a/bin/winsvc_wrapper.winsvc.ml b/bin/winsvc_wrapper.winsvc.ml
 index c4055ec..2802854 100644
@@ -71,12 +54,22 @@ index c4055ec..2802854 100644
  let run name main =
 EOF
 
+  mkdir -p install
   ocaml-env exec -- dune build @install --profile=$PROFILE --root=.
   ocaml-env exec -- dune install --prefix=install --relocatable --root=.
 
   cd ../docker-base-images || exit
   mkdir -p install
-  # ocaml-env exec -- opam install -y .
+  cd docker-base-images || exit
+  sed -i'' \
+      -e 's|ocurrent/opam-staging|antonindecimo/opam-windows|g' \
+      -e 's|ocaml/opam|antonindecimo/opam-windows|g' \
+      -e 's|\"ocurrent\"|\"antonindecimo\"|g' \
+      -e 's/  | `Linux | `Windows -> true/  | `Windows -> true/g' \
+      src/conf.ml
+  sed -i'' \
+      -e 's|\"ocurrentbuilder\"|\"antonindecimo\"|g' \
+      src/base_images.ml
   ocaml-env exec -- dune build @install --profile=$PROFILE
   ocaml-env exec -- dune install --prefix=install --relocatable
 

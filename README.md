@@ -44,7 +44,7 @@ sc start ocluster-scheduler
   --state-dir=%LIB%\ocluster-worker ^
   --name=%COMPUTERNAME%-worker ^
   --capacity=%NUMBER_OF_PROCESSORS% ^
-  --allow-push antonindecimo/opam-windows ^
+  --allow-push=antonindecimo/opam-windows ^
   --prune-threshold=10 ^
   --connect=%CD%\capnp-secrets\pool-windows-x86_64.cap
 
@@ -56,7 +56,7 @@ sc start ocluster-worker
 
 .\output\base-images.exe ^
   --submission-service=%CD%\capnp-secrets\user.cap ^
-  --staging-password-file=C:\ProgramData\Docker\secrets\ocurrent-hub
+  --staging-password-file=C:\ProgramData\docker\secrets\ocurrent-hub
 ```
 
 [ocluster]: https://github.com/ocurrent/ocluster/
