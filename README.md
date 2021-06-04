@@ -23,8 +23,8 @@ run Windows jobs, then
 @rem the current repo
 cd base-images-builder
 @rem the OCluster state
-set LIB=%APPDATA%\ocluster
-mkdir "%LIB%" capnp-secrets
+set LIB=C:\Windows\System32\config\systemprofile\AppData\Roaming\
+mkdir capnp-secrets
 
 @rem Build everything
 deps.cmd && build.cmd
