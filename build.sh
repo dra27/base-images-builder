@@ -52,21 +52,36 @@ index c4055ec..2802854 100644
    Format.formatter_of_out_channel (open_out_bin f)
 
  let run name main =
+diff --git a/bin/logging.ml b/bin/logging.ml
+index 0200f1b..92bf5bd 100644
+--- a/bin/logging.ml
++++ b/bin/logging.ml
+@@ -18,6 +18,6 @@ let reporter =
+
+ let init () =
+   Fmt_tty.setup_std_outputs ();
+-  Logs.(set_level (Some Warning));
+-  (* Logs.Src.set_level Capnp_rpc.Debug.src (Some Debug); *)
++  Logs.(set_level (Some Debug));
++  Logs.Src.set_level Capnp_rpc.Debug.src (Some Debug);
+   Logs.set_reporter reporter
 diff --git a/worker/cluster_worker.ml b/worker/cluster_worker.ml
-index 244d6df..d79b851 100644
+index 244d6df..2c453c3 100644
 --- a/worker/cluster_worker.ml
 +++ b/worker/cluster_worker.ml
-@@ -118,8 +118,8 @@ let docker_push ~switch ~log t hash { Cluster_api.Docker.Spec.target; auth } =
-     match auth with
+@@ -119,9 +119,9 @@ let docker_push ~switch ~log t hash { Cluster_api.Docker.Spec.target; auth } =
      | None -> tag_and_push ()
      | Some (user, password) ->
--      let login_cmd = docker ["login"; "--password-stdin"; "--username"; user] in
+       let login_cmd = docker ["login"; "--password-stdin"; "--username"; user] in
 -      Process.exec ~label:"docker-login" ~switch ~log ~stdin:password ~stderr:`Keep login_cmd >>= function
-+      let login_cmd = docker ["login"; "-p"; password; "--username"; user] in
-+      Process.exec ~label:"docker-login" ~switch ~log ~stderr:`Keep login_cmd >>= function
-       | Error (`Exit_code _) ->
-         Lwt_result.fail (`Msg (Fmt.strf "Failed to docker-login as %S" user))
+-      | Error (`Exit_code _) ->
+-        Lwt_result.fail (`Msg (Fmt.strf "Failed to docker-login as %S" user))
++      Process.exec ~label:"docker-login" ~switch ~log ~stdin:password login_cmd >>= function
++      | Error (`Exit_code e) ->
++        Lwt_result.fail (`Msg (Fmt.strf "Failed to docker-login as %S with exit code %d" user e))
        | Error (`Msg _ | `Cancelled as e) -> Lwt_result.fail e
+       | Ok () -> tag_and_push ()
+   )
 EOF
 
   mkdir -p install
