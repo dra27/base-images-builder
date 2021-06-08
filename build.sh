@@ -52,6 +52,21 @@ index c4055ec..2802854 100644
    Format.formatter_of_out_channel (open_out_bin f)
 
  let run name main =
+diff --git a/worker/cluster_worker.ml b/worker/cluster_worker.ml
+index 244d6df..d79b851 100644
+--- a/worker/cluster_worker.ml
++++ b/worker/cluster_worker.ml
+@@ -118,8 +118,8 @@ let docker_push ~switch ~log t hash { Cluster_api.Docker.Spec.target; auth } =
+     match auth with
+     | None -> tag_and_push ()
+     | Some (user, password) ->
+-      let login_cmd = docker ["login"; "--password-stdin"; "--username"; user] in
+-      Process.exec ~label:"docker-login" ~switch ~log ~stdin:password ~stderr:`Keep login_cmd >>= function
++      let login_cmd = docker ["login"; "-p"; password; "--username"; user] in
++      Process.exec ~label:"docker-login" ~switch ~log ~stderr:`Keep login_cmd >>= function
+       | Error (`Exit_code _) ->
+         Lwt_result.fail (`Msg (Fmt.strf "Failed to docker-login as %S" user))
+       | Error (`Msg _ | `Cancelled as e) -> Lwt_result.fail e
 EOF
 
   mkdir -p install

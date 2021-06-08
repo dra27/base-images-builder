@@ -20,6 +20,9 @@ Download and extract the repo, have Docker for Windows configured to
 run Windows jobs, then
 
 ``` batchfile
+@rem on the worker
+git config --system core.longpaths true
+
 @rem the current repo
 cd base-images-builder
 @rem the OCluster state
@@ -55,7 +58,7 @@ sc start ocluster-worker
   --connect=%CD%\capnp-secrets\admin.cap user > .\capnp-secrets\user.cap
 
 .\output\base-images.exe ^
-  --submission-service=%CD%\capnp-secrets\user.cap ^
+  --submission-service=%CD%\capnp-secrets\user2.cap ^
   --staging-password-file=C:\ProgramData\docker\secrets\ocurrent-hub
 ```
 
