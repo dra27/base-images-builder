@@ -39,19 +39,6 @@ extract)
 
   cd ocluster || exit
   patch -Np1 << 'EOF'
-diff --git a/bin/winsvc_wrapper.winsvc.ml b/bin/winsvc_wrapper.winsvc.ml
-index c4055ec..2802854 100644
---- a/bin/winsvc_wrapper.winsvc.ml
-+++ b/bin/winsvc_wrapper.winsvc.ml
-@@ -1,6 +1,6 @@
- let formatter =
--  let f = Filename.null in
--  (* let f = Filename.(concat (Sys.getenv "APPDATA") (Sys.executable_name |> basename |> remove_extension |> Fun.flip (^) ".log")) in *)
-+  (* let f = Filename.null in *)
-+  let f = Filename.(concat (Sys.getenv "APPDATA") (Sys.executable_name |> basename |> remove_extension |> Fun.flip (^) ".log")) in
-   Format.formatter_of_out_channel (open_out_bin f)
-
- let run name main =
 diff --git a/bin/logging.ml b/bin/logging.ml
 index 0200f1b..92bf5bd 100644
 --- a/bin/logging.ml
@@ -65,23 +52,19 @@ index 0200f1b..92bf5bd 100644
 +  Logs.(set_level (Some Debug));
 +  Logs.Src.set_level Capnp_rpc.Debug.src (Some Debug);
    Logs.set_reporter reporter
-diff --git a/worker/cluster_worker.ml b/worker/cluster_worker.ml
-index 244d6df..2c453c3 100644
---- a/worker/cluster_worker.ml
-+++ b/worker/cluster_worker.ml
-@@ -119,9 +119,9 @@ let docker_push ~switch ~log t hash { Cluster_api.Docker.Spec.target; auth } =
-     | None -> tag_and_push ()
-     | Some (user, password) ->
-       let login_cmd = docker ["login"; "--password-stdin"; "--username"; user] in
--      Process.exec ~label:"docker-login" ~switch ~log ~stdin:password ~stderr:`Keep login_cmd >>= function
--      | Error (`Exit_code _) ->
--        Lwt_result.fail (`Msg (Fmt.strf "Failed to docker-login as %S" user))
-+      Process.exec ~label:"docker-login" ~switch ~log ~stdin:password login_cmd >>= function
-+      | Error (`Exit_code e) ->
-+        Lwt_result.fail (`Msg (Fmt.strf "Failed to docker-login as %S with exit code %d" user e))
-       | Error (`Msg _ | `Cancelled as e) -> Lwt_result.fail e
-       | Ok () -> tag_and_push ()
-   )
+diff --git a/bin/winsvc_wrapper.winsvc.ml b/bin/winsvc_wrapper.winsvc.ml
+index c4055ec..2802854 100644
+--- a/bin/winsvc_wrapper.winsvc.ml
++++ b/bin/winsvc_wrapper.winsvc.ml
+@@ -1,6 +1,6 @@
+ let formatter =
+-  let f = Filename.null in
+-  (* let f = Filename.(concat (Sys.getenv "APPDATA") (Sys.executable_name |> basename |> remove_extension |> Fun.flip (^) ".log")) in *)
++  (* let f = Filename.null in *)
++  let f = Filename.(concat (Sys.getenv "APPDATA") (Sys.executable_name |> basename |> remove_extension |> Fun.flip (^) ".log")) in
+   Format.formatter_of_out_channel (open_out_bin f)
+
+ let run name main =
 EOF
 
   mkdir -p install
