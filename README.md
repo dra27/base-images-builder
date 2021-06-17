@@ -25,40 +25,50 @@ git config --system core.longpaths true
 
 @rem the current repo
 cd base-images-builder
+
 @rem the OCluster state
-set LIB=C:\Windows\System32\config\systemprofile\AppData\Roaming\
-mkdir capnp-secrets
+set LIB=C:\Windows\System32\config\systemprofile\AppData\Roaming
+
+@rem the secrets directory
+set SECRETS=%CD%\capnp-secrets
+
+@rem the Docker Hub account where to push images
+set ALLOW_PUSH=antonindecimo/opam-windows
+
+mkdir %SECRETS%
 
 @rem Build everything
 deps.cmd && build.cmd
 
-.\output\ocluster-scheduler.exe --install ^
-  --capnp-secret-key-file=%CD%\capnp-secrets\key.pem ^
+.\output\ocluster-scheduler.exe install ^
+  --capnp-secret-key-file=%SECRETS%\key.pem ^
   --capnp-listen-address=tcp:0.0.0.0:9000 ^
   --capnp-public-address=tcp:localhost:9000 ^
   --state-dir=%LIB%\ocluster-scheduler ^
-  --secrets-dir=%CD%\capnp-secrets ^
+  --secrets-dir=%SECRETS% ^
   --pools=windows-x86_64
 
 @rem as an Administrator
 sc start ocluster-scheduler
 
-.\output\ocluster-worker.exe --install ^
+set /a CAPACITY=NUMBER_OF_PROCESSORS/2
+
+.\output\ocluster-worker.exe install ^
   --state-dir=%LIB%\ocluster-worker ^
   --name=%COMPUTERNAME%-worker ^
-  --capacity=%NUMBER_OF_PROCESSORS% ^
-  --allow-push=antonindecimo/opam-windows ^
+  --capacity=%CAPACITY% ^
+  --allow-push=%ALLOW_PUSH% ^
   --prune-threshold=10 ^
-  --connect=%CD%\capnp-secrets\pool-windows-x86_64.cap
+  --connect=%SECRETS%\pool-windows-x86_64.cap
 
 @rem as an Administrator
 sc start ocluster-worker
 
 .\output\ocluster-admin.exe add-client ^
-  --connect=%CD%\capnp-secrets\admin.cap user > .\capnp-secrets\user.cap
+  --connect=%SECRETS%\admin.cap user > %SECRETS%\user.cap
 
 .\output\base-images.exe ^
-  --submission-service=%CD%\capnp-secrets\user2.cap ^
+  --submission-service=%SECRETS%\user.cap ^
   --staging-password-file=C:\ProgramData\docker\secrets\ocurrent-hub
 ```
 
