@@ -38,35 +38,6 @@ extract)
   git clone --recursive --depth=1 --branch=windows https://github.com/MisterDA/ocluster.git
 
   cd ocluster || exit
-  patch -Np1 << 'EOF'
-diff --git a/bin/logging.ml b/bin/logging.ml
-index 0200f1b..92bf5bd 100644
---- a/bin/logging.ml
-+++ b/bin/logging.ml
-@@ -18,6 +18,6 @@ let reporter =
-
- let init () =
-   Fmt_tty.setup_std_outputs ();
--  Logs.(set_level (Some Warning));
--  (* Logs.Src.set_level Capnp_rpc.Debug.src (Some Debug); *)
-+  Logs.(set_level (Some Debug));
-+  Logs.Src.set_level Capnp_rpc.Debug.src (Some Debug);
-   Logs.set_reporter reporter
-diff --git a/bin/winsvc_wrapper.winsvc.ml b/bin/winsvc_wrapper.winsvc.ml
-index c4055ec..2802854 100644
---- a/bin/winsvc_wrapper.winsvc.ml
-+++ b/bin/winsvc_wrapper.winsvc.ml
-@@ -1,6 +1,6 @@
- let formatter =
--  let f = Filename.null in
--  (* let f = Filename.(concat (Sys.getenv "APPDATA") (Sys.executable_name |> basename |> remove_extension |> Fun.flip (^) ".log")) in *)
-+  (* let f = Filename.null in *)
-+  let f = Filename.(concat (Sys.getenv "APPDATA") (Sys.executable_name |> basename |> remove_extension |> Fun.flip (^) ".log")) in
-   Format.formatter_of_out_channel (open_out_bin f)
-
- let run name main =
-EOF
-
   mkdir -p install
   ocaml-env exec -- dune build @install --profile=$PROFILE --root=.
   ocaml-env exec -- dune install --prefix=install --relocatable --root=.
