@@ -6,15 +6,11 @@ export "PATH=/usr/x86_64-w64-mingw32/bin:$PATH"
 
 case $1 in
 1)
-  ocaml-env exec -- opam source mirage-crypto.0.10.1
-  cd mirage-crypto.0.10.1
+  ocaml-env exec -- opam source mirage-crypto.0.10.2
+  cd mirage-crypto.0.10.2
   ocaml-env exec -- opam install -y --deps-only --with-test ./mirage-crypto.opam
   ocaml-env exec -- env PKG_CONFIG_PATH=/cygdrive/c/opam/.opam/4.12/lib/pkgconfig dune build -p mirage-crypto @install
   ocaml-env exec -- env PKG_CONFIG_PATH=/cygdrive/c/opam/.opam/4.12/lib/pkgconfig opam install -y ./mirage-crypto.opam
-
-  cd ..
-  ocaml-env exec -- opam source mirage-crypto-ec.0.10.1
-  cd mirage-crypto-ec.0.10.1
   ocaml-env exec -- opam install -y --deps-only --with-test ./mirage-crypto-ec.opam
   ocaml-env exec -- env PKG_CONFIG_PATH=/cygdrive/c/opam/.opam/4.12/lib/pkgconfig dune build -p mirage-crypto-ec @install
   ocaml-env exec -- env PKG_CONFIG_PATH=/cygdrive/c/opam/.opam/4.12/lib/pkgconfig opam install -y ./mirage-crypto-ec.opam
