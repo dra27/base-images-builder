@@ -94,9 +94,9 @@ EOF
 
   cd .. || exit
   for dir in docker-base-images/install/bin ocluster/install/bin; do
-    for exe in $dir/*.exe ; do
-      for dll in $(PATH="/usr/x86_64-w64-mingw32/sys-root/mingw/bin:$PATH" cygcheck "$exe" | fgrep x86_64-w64-mingw32 | sed -e 's/^ *//'); do
-        if [ ! -e /cygdrive/c/output/$(basename "$dll") ] ; then
+    for exe in "$dir"/*.exe ; do
+      for dll in $(PATH="/usr/x86_64-w64-mingw32/sys-root/mingw/bin:$PATH" cygcheck "$exe" | grep -F x86_64-w64-mingw32 | sed -e 's/^ *//'); do
+        if [ ! -e "/cygdrive/c/output/$(basename "$dll")" ] ; then
           echo "Extracting $dll for $exe"
           cp "$dll" /cygdrive/c/output/
         else
