@@ -1,0 +1,7 @@
+/.git*
+/capnp-secrets
+/output
+/_build
+/*.cmd
+/Dockerfile
+/*.md
