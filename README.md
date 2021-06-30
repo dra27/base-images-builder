@@ -46,7 +46,8 @@ deps.cmd && build.cmd
   --capnp-public-address=tcp:localhost:9000 ^
   --state-dir=%LIB%\ocluster-scheduler ^
   --secrets-dir=%SECRETS% ^
-  --pools=windows-x86_64
+  --pools=windows-x86_64 ^
+  --verbosity=info
 
 @rem as an Administrator
 sc start ocluster-scheduler
@@ -59,7 +60,8 @@ set /a CAPACITY=NUMBER_OF_PROCESSORS/2
   --capacity=%CAPACITY% ^
   --allow-push=%ALLOW_PUSH% ^
   --prune-threshold=10 ^
-  --connect=%SECRETS%\pool-windows-x86_64.cap
+  --connect=%SECRETS%\pool-windows-x86_64.cap ^
+  --verbosity=info
 
 @rem as an Administrator
 sc start ocluster-worker
@@ -69,7 +71,8 @@ sc start ocluster-worker
 
 .\output\base-images.exe ^
   --submission-service=%SECRETS%\user.cap ^
-  --staging-password-file=C:\ProgramData\docker\secrets\ocurrent-hub
+  --staging-password-file=C:\ProgramData\docker\secrets\ocurrent-hub ^
+  --verbosity=info
 ```
 
 [ocluster]: https://github.com/ocurrent/ocluster/
