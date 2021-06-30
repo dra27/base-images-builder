@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set -ex
+shopt -s nullglob
 
 export "PATH=/usr/x86_64-w64-mingw32/bin:$PATH"
 
