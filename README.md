@@ -4,13 +4,12 @@ Build the [OCluster][ocluster] tools required to build OCaml and Opam
 [Docker base images][docker-base-images].
 
 The current Docker Hub user/repo the images are pushed to is
-[`antonindecimo/opam-windows`][docker-hub] and it's a hack as I don't
-use a staging user. Change it in `build.sh` and in the script below,
-in `--allow-push`.
+[`ocaml/opam`][docker-hub]. Change it in `build.sh` and in the script
+below, in `--allow-push`.
 
-As another hack, the password for the Docker Hub user need to be
-written to the usual mount points of secrets if starting base-images
-directly and not through docker-compose. On Windows, that's
+The password for the Docker Hub user need to be written to the usual
+mount points of secrets if starting base-images directly and not
+through docker-compose. On Windows, that's
 `C:\ProgramData\Docker\secrets\ocurrent-hub`.
 
 Encode the cap files in UTF8 (without BOM) or ASCII, with LF line
@@ -33,7 +32,7 @@ set LIB=C:\Windows\System32\config\systemprofile\AppData\Roaming
 set SECRETS=%CD%\capnp-secrets
 
 @rem the Docker Hub account where to push images
-set ALLOW_PUSH=antonindecimo/opam-windows
+set ALLOW_PUSH=ocurrent/opam-staging
 
 mkdir %SECRETS%
 
@@ -58,8 +57,8 @@ set /a CAPACITY=NUMBER_OF_PROCESSORS/2
   --state-dir=%LIB%\ocluster-worker ^
   --name=%COMPUTERNAME%-worker ^
   --capacity=%CAPACITY% ^
-  --allow-push=%ALLOW_PUSH% ^
   --prune-threshold=10 ^
+  --allow-push=ocurrent/opam-staging ^
   --connect=%SECRETS%\pool-windows-x86_64.cap ^
   --verbosity=info
 
@@ -77,4 +76,4 @@ sc start ocluster-worker
 
 [ocluster]: https://github.com/ocurrent/ocluster/
 [docker-base-images]: https://github.com/ocurrent/docker-base-images
-[docker-hub]: https://hub.docker.com/r/antonindecimo/opam-windows
+[docker-hub]: https://hub.docker.com/r/ocaml/opam/tags?ordering=-name&name=windows&page=1
