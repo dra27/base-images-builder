@@ -65,6 +65,7 @@ set /a CAPACITY=NUMBER_OF_PROCESSORS/2
 @rem as an Administrator
 sc start ocluster-worker
 
+@rem Convert user.cap from CRLF to LF
 .\output\ocluster-admin.exe add-client ^
   --connect=%SECRETS%\admin.cap user > %SECRETS%\user.cap
 
