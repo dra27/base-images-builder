@@ -36,6 +36,11 @@ set ALLOW_PUSH=ocurrent/opam-staging
 
 mkdir %SECRETS%
 
+@rem Set the Docker isolation
+set ISOLATION=hyperv
+@rem Set the Docker Network
+set NETWORK=Default Switch
+
 @rem Build everything
 deps.cmd && build.cmd
 
@@ -51,7 +56,7 @@ deps.cmd && build.cmd
 @rem as an Administrator
 sc start ocluster-scheduler
 
-set /a CAPACITY=NUMBER_OF_PROCESSORS/2
+set /a CAPACITY=NUMBER_OF_PROCESSORS/4
 
 .\output\ocluster-worker.exe install ^
   --state-dir=%LIB%\ocluster-worker ^

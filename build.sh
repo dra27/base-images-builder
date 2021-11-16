@@ -43,19 +43,21 @@ extract)
   ocaml-env exec -- dune build @install --profile=$PROFILE
   ocaml-env exec -- dune install --prefix=install --relocatable
 
+  OUTPUT=/home/opam/base-images-builder/output
+
   cd .. || exit
   for dir in docker-base-images/install/bin ocluster/install/bin; do
     for exe in "$dir"/*.exe ; do
       for dll in $(PATH="/usr/x86_64-w64-mingw32/sys-root/mingw/bin:$PATH" cygcheck "$exe" | grep -F x86_64-w64-mingw32 | sed -e 's/^ *//'); do
-        if [ ! -e "/cygdrive/c/output/$(basename "$dll")" ] ; then
+        if [ ! -e "$OUTPUT/$(basename "$dll")" ] ; then
           echo "Extracting $dll for $exe"
-          cp "$dll" /cygdrive/c/output/
+          cp "$dll" "$OUTPUT/"
         else
         echo "$exe uses $dll (already extracted)"
         fi
       done
       echo "Extracted $exe"
-      cp "$exe" /cygdrive/c/output/
+      cp "$exe" "$OUTPUT/"
     done
   done
 ;;
