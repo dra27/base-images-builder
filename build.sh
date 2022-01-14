@@ -10,7 +10,7 @@ case $1 in
   ocaml-env exec -- opam source mirage-crypto.0.10.5
   cd mirage-crypto.0.10.5
   ocaml-env exec -- opam install -y --deps-only --with-test ./mirage-crypto.opam
-  PKG_CONFIG_PATH=/cygdrive/c/opam/.opam/4.13/lib/pkgconfig
+  PKG_CONFIG_PATH=$(cygpath -u "$(ocaml-env exec -- opam var lib)")/pkgconfig
   ocaml-env exec -- env PKG_CONFIG_PATH="$PKG_CONFIG_PATH" dune build -p mirage-crypto @install
   ocaml-env exec -- env PKG_CONFIG_PATH="$PKG_CONFIG_PATH" opam install -y ./mirage-crypto.opam
   ocaml-env exec -- opam install -y --deps-only --with-test ./mirage-crypto-ec.opam
