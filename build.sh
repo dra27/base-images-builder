@@ -16,21 +16,17 @@ case $1 in
   ocaml-env exec -- opam install -y --deps-only --with-test ./mirage-crypto-ec.opam
   ocaml-env exec -- env PKG_CONFIG_PATH="$PKG_CONFIG_PATH" dune build -p mirage-crypto-ec @install
   ocaml-env exec -- env PKG_CONFIG_PATH="$PKG_CONFIG_PATH" opam install -y ./mirage-crypto-ec.opam
-
-  cd ../docker-base-images/ocurrent
-  ocaml-env exec -- opam install -y --deps-only .
 ;;
 2)
-  cd ocluster
-  git remote add MisterDA https://github.com/MisterDA/ocluster.git
+  cd ocluster || exit
   git fetch MisterDA
   git switch windows
   ocaml-env exec -- opam install -y --deps-only .
-  ocaml-env exec -- opam pin xdg-basedir.0.0.4 'https://github.com/gildor478/ocaml-xdg-basedir/releases/download/0.0.4/ocaml-xdg-basedir-0.0.4.tar.gz'
-;;
-3)
-  cd docker-base-images
+  git submodule update --recursive
+
+  cd obuilder || exit
   ocaml-env exec -- opam install -y --deps-only .
+  cd ../.. || exit
 ;;
 extract)
   PROFILE=debug
@@ -40,14 +36,10 @@ extract)
   ocaml-env exec -- dune build @install --profile=$PROFILE --root=.
   ocaml-env exec -- dune install --prefix=install --relocatable --root=.
 
-  mkdir -p install
-  ocaml-env exec -- dune build @install --profile=$PROFILE
-  ocaml-env exec -- dune install --prefix=install --relocatable
-
   OUTPUT=/home/opam/base-images-builder/output
 
   cd .. || exit
-  for dir in docker-base-images/install/bin ocluster/install/bin; do
+  for dir in ocluster/install/bin; do
     for exe in "$dir"/*.exe ; do
       for dll in $(PATH="/usr/x86_64-w64-mingw32/sys-root/mingw/bin:$PATH" cygcheck "$exe" | grep -F x86_64-w64-mingw32 | sed -e 's/^ *//'); do
         if [ ! -e "$OUTPUT/$(basename "$dll")" ] ; then

@@ -8,7 +8,7 @@ docker build -t builder-base --isolation=%ISOLATION% --network="%NETWORK%" ^
              --build-arg OPAMJOBS .
 docker tag builder-base builder-deps
 
-for /l %%i in (1,1,3) do (
+for /l %%i in (1,1,2) do (
   docker run --isolation=%ISOLATION% --cpu-count=%CPU_COUNT% --memory=8g ^
              --network="%NETWORK%" --user=ContainerAdministrator ^
              --name basic-next ^

@@ -39,7 +39,7 @@ mkdir %SECRETS%
 @rem Set the Docker isolation
 set ISOLATION=hyperv
 @rem Set the Docker Network
-set NETWORK=Default Switch
+set NETWORK=nat
 
 @rem Build everything
 deps.cmd && build.cmd
@@ -47,7 +47,7 @@ deps.cmd && build.cmd
 .\output\ocluster-scheduler.exe install ^
   --capnp-secret-key-file=%SECRETS%\key.pem ^
   --capnp-listen-address=tcp:0.0.0.0:9000 ^
-  --capnp-public-address=tcp:localhost:9000 ^
+  --capnp-public-address=tcp:ocl.cl.cam.ac.uk:9000 ^
   --state-dir=%LIB%\ocluster-scheduler ^
   --secrets-dir=%SECRETS% ^
   --pools=windows-x86_64 ^
@@ -60,8 +60,10 @@ set /a CAPACITY=NUMBER_OF_PROCESSORS/4
 
 .\output\ocluster-worker.exe install ^
   --state-dir=%LIB%\ocluster-worker ^
+  --obuilder-state-dir=%LIB%\obuilder ^
   --name=%COMPUTERNAME%-worker ^
   --capacity=%CAPACITY% ^
+  --docker-cpus=%CAPACITY% ^
   --prune-threshold=10 ^
   --allow-push=ocurrent/opam-staging ^
   --connect=%SECRETS%\pool-windows-x86_64.cap ^
@@ -73,11 +75,6 @@ sc start ocluster-worker
 @rem Convert user.cap from CRLF to LF
 .\output\ocluster-admin.exe add-client ^
   --connect=%SECRETS%\admin.cap user > %SECRETS%\user.cap
-
-.\output\base-images.exe ^
-  --submission-service=%SECRETS%\user.cap ^
-  --staging-password-file=C:\ProgramData\docker\secrets\ocurrent-hub ^
-  --verbosity=info
 ```
 
 [ocluster]: https://github.com/ocurrent/ocluster/
