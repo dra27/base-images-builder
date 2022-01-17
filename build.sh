@@ -22,7 +22,11 @@ case $1 in
 ;;
 2)
   cd ocluster
+  git remote add MisterDA https://github.com/MisterDA/ocluster.git
+  git fetch MisterDA
+  git switch windows
   ocaml-env exec -- opam install -y --deps-only .
+  ocaml-env exec -- opam pin xdg-basedir.0.0.4 'https://github.com/gildor478/ocaml-xdg-basedir/releases/download/0.0.4/ocaml-xdg-basedir-0.0.4.tar.gz'
 ;;
 3)
   cd docker-base-images
@@ -30,10 +34,6 @@ case $1 in
 ;;
 extract)
   PROFILE=debug
-
-  rm -rf docker-base-images ocluster
-  git clone --recursive --depth=1 https://github.com/ocurrent/docker-base-images.git
-  git clone --recursive --depth=1 https://github.com/ocurrent/ocluster.git
 
   cd ocluster || exit
   mkdir -p install
